@@ -1,0 +1,4 @@
+zone "ab-finance.no" {
+    type master;
+    file "/etc/bind/zones/db.ab-finance.no";
+};

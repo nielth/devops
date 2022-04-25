@@ -1,0 +1,31 @@
+version: "3.7"
+services:
+  web:
+    build: ./app
+    container_name: api
+    volumes:
+      - ./app/:/code
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    volumes:
+      - ./nginx/letsencrypt:/etc/letsencrypt
+    ports:
+      - 1337:443
+      - 88:80
+    depends_on:
+      - web
+  dns:
+    build: ./dns
+    container_name: bind9
+    ports:
+      - 53:53
+    networks:
+      customnetwork:
+        ipv4_address: 172.20.0.2
+
+networks:
+  customnetwork:
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
