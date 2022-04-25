@@ -1,20 +1,23 @@
-version: "3.7"
+version: "3.8"
 services:
   web:
-    build: ./app
-    container_name: api
+    build: ./flask-example
+    container_name: flask
     volumes:
       - ./app/:/code
+    networks:
+      customnetwork:
+        ipv4_address: 172.15.0.3
   nginx:
     build: ./nginx
     container_name: nginx
-    volumes:
-      - ./nginx/letsencrypt:/etc/letsencrypt
     ports:
-      - 1337:443
       - 88:80
     depends_on:
       - web
+    networks:
+      customnetwork:
+        ipv4_address: 172.15.0.4
   dns:
     build: ./dns
     container_name: bind9
@@ -22,10 +25,10 @@ services:
       - 53:53
     networks:
       customnetwork:
-        ipv4_address: 172.20.0.2
+        ipv4_address: 172.15.0.2
 
 networks:
   customnetwork:
     ipam:
       config:
-        - subnet: 172.20.0.0/16
+        - subnet: 172.15.0.0/16
