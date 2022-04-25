@@ -23,6 +23,9 @@ services:
     container_name: bind9
     ports:
       - 53:53
+    environment:
+      - DNS_SERVER=10.225.148.34
+      - WEB_SERVER=10.225.148.34
     networks:
       customnetwork:
         ipv4_address: 172.15.0.2

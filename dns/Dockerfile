@@ -14,5 +14,7 @@ COPY conf/named.conf.options /etc/bind/
 COPY conf/named.conf.local /etc/bind/
 COPY conf/db.ab-finance.no /etc/bind/zones/
 
+
+
 # Run eternal loop
 CMD [ "/bin/bash", "-c", "while :; do sleep 10; done" ]
