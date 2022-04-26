@@ -2,7 +2,7 @@ options {
     directory "/var/cache/bind";
 
     recursion yes;
-    listen-on { any; };
+    listen-on { 0.0.0.0; };
 
     forwarders {
             8.8.8.8;

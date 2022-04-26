@@ -1,10 +1,12 @@
 FROM ubuntu:bionic
 
 RUN apt-get update \
-  && apt-get install -y \
-  bind9 \
-  bind9utils \
-  bind9-doc
+    && apt-get install -y \
+    bind9 \
+    bind9utils \
+    bind9-doc \
+    tcpdump \
+    iptables
 
 # Enable IPv4
 RUN sed -i 's/OPTIONS=.*/OPTIONS="-4 -u bind"/' /etc/default/bind9
@@ -14,7 +16,7 @@ COPY conf/named.conf.options /etc/bind/
 COPY conf/named.conf.local /etc/bind/
 COPY conf/db.ab-finance.no /etc/bind/zones/
 
-
+RUN /etc/init.d/bind9 start
 
 # Run eternal loop
 CMD [ "/bin/bash", "-c", "while :; do sleep 10; done" ]
