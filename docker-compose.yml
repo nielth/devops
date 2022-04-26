@@ -10,9 +10,9 @@ services:
         ipv4_address: 172.15.0.3
   nginx:
     build: ./nginx
-    container_name: nginx
+    container_name: reverseproxy
     ports:
-      - 88:80
+      - 80:80
     depends_on:
       - web
     networks:
@@ -21,14 +21,12 @@ services:
   dns:
     build: ./dns
     container_name: bind9
+    network_mode: host
     ports:
       - 53:53
     environment:
       - DNS_SERVER=10.225.148.34
       - WEB_SERVER=10.225.148.34
-    networks:
-      customnetwork:
-        ipv4_address: 172.15.0.2
 
 networks:
   customnetwork:
