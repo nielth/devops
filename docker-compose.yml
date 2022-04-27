@@ -3,11 +3,11 @@ services:
   gitlab:
     image: 'gitlab/gitlab-ee:14.10.0-ee.0'
     restart: always
-    container_name: gitlab
+    container_name: gitlab_ee
     hostname: 'gitlab.example.com'
     environment:
       GITLAB_OMNIBUS_CONFIG: |
-        external_url 'http://10.0.0.33:81'
+        external_url 'http://${IPV4_GITLAB}:81'
         gitlab_rails['gitlab_shell_ssh_port'] = 2224
     ports:
       - '81:81'
@@ -21,7 +21,7 @@ services:
         test: ["CMD", "curl", "-f", "http://localhost:81"]
         interval: 30s
         timeout: 10s
-        retries: 10
+        retries: 60
   web:
     build: ./flask-example
     container_name: flask
@@ -39,6 +39,7 @@ services:
     network_mode: host
     ports:
       - 53:53
-    # environment:
-    #   - DNS_SERVER=10.225.148.34
-    #   - WEB_SERVER=10.225.148.34
+    environment:
+      - DNS_SERVER=${IPV4_DNS}
+      - WEB_SERVER=${IPV4_WORK}
+      - GITLAB_SERVER=${IPV4_GITLAB}

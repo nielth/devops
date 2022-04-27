@@ -15,8 +15,11 @@ COPY conf/named.conf.options /etc/bind/
 COPY conf/named.conf.local /etc/bind/
 COPY conf/db.ab-finance.no /etc/bind/zones/
 COPY ./script.sh /
+COPY ./docker-entrypoint.sh /
 
-RUN chmod +x script.sh 
+RUN chmod +x docker-entrypoint.sh 
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
 
 # Run eternal loop
-CMD [ "./script.sh" ]
+# CMD [ "./script.sh" ]
