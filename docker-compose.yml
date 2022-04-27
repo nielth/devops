@@ -1,35 +1,44 @@
 version: "3.8"
 services:
+  gitlab:
+    image: 'gitlab/gitlab-ee:14.10.0-ee.0'
+    restart: always
+    container_name: gitlab
+    hostname: 'gitlab.example.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://10.0.0.33:81'
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '81:81'
+      - '2224:22'
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
+    healthcheck:
+        test: ["CMD", "curl", "-f", "http://localhost:81"]
+        interval: 30s
+        timeout: 10s
+        retries: 10
   web:
     build: ./flask-example
     container_name: flask
-    volumes:
-      - ./app/:/code
-    networks:
-      customnetwork:
-        ipv4_address: 172.15.0.3
   nginx:
     build: ./nginx
     container_name: reverseproxy
     ports:
       - 80:80
     depends_on:
-      - web
-    networks:
-      customnetwork:
-        ipv4_address: 172.15.0.4
+      gitlab:
+        condition: service_healthy
   dns:
     build: ./dns
     container_name: bind9
     network_mode: host
     ports:
       - 53:53
-    environment:
-      - DNS_SERVER=10.225.148.34
-      - WEB_SERVER=10.225.148.34
-
-networks:
-  customnetwork:
-    ipam:
-      config:
-        - subnet: 172.15.0.0/16
+    # environment:
+    #   - DNS_SERVER=10.225.148.34
+    #   - WEB_SERVER=10.225.148.34

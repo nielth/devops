@@ -1,15 +1,21 @@
 $TTL    604800
 @       IN      SOA     ns1.ab-finance.no. root.ab-finance.no. (
-                  3       ; Serial
-             604800     ; Refresh
-              86400     ; Retry
-            2419200     ; Expire
-             604800 )   ; Negative Cache TTL
+                              5         ; Serial
+                         604800         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
 ;
-; name servers - NS records
-                         IN      NS     ns1.ab-finance.no.
 
-; name servers - A records
-ns1.ab-finance.no.       IN      A      10.0.0.33
+; Name servers
+ab-finance.no.  IN      NS      ns1.ab-finance.no.
 
-ab-finance.no.           IN      A      10.0.0.33
+; A records for name servers
+ns1             IN      A       10.0.0.33
+ns2             IN      A       10.0.0.33
+
+; Other A records
+work            IN      A       10.0.0.33
+gitlab          IN      A       10.0.0.33
+www.work        IN      CNAME   work
+www.gitlab      IN      CNAME   gitlab

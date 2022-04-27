@@ -14,8 +14,9 @@ RUN sed -i 's/OPTIONS=.*/OPTIONS="-4 -u bind"/' /etc/default/bind9
 COPY conf/named.conf.options /etc/bind/
 COPY conf/named.conf.local /etc/bind/
 COPY conf/db.ab-finance.no /etc/bind/zones/
+COPY ./script.sh /
 
-RUN /etc/init.d/bind9 start
+RUN chmod +x script.sh 
 
 # Run eternal loop
-CMD [ "/bin/bash", "-c", "while :; do sleep 10; done" ]
+CMD [ "./script.sh" ]
