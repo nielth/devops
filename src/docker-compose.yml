@@ -1,0 +1,67 @@
+version: "3.8"
+services:
+  nginx:
+    build: ./nginx
+    container_name: nginx
+    volumes:
+      - ./cert/:/etc/nginx/ssl/:ro
+    ports:
+      - 443:443
+      - 80:80
+    depends_on:
+      - web
+    restart: unless-stopped
+  gitlab:
+    image: 'gitlab/gitlab-ee:14.10.0-ee.0'
+    restart: always
+    container_name: gitlab_ee
+    hostname: 'gitlab.example.com'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'https://gitlab.ab-finance.wtf'
+        nginx['listen_port'] = 80
+        nginx['listen_https'] = false
+        gitlab_rails['gitlab_shell_ssh_port'] = 2224
+    ports:
+      - '81:80'
+      - '2224:22'
+    volumes:
+      - './gitlab/config:/etc/gitlab'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+    shm_size: '256m'
+    networks:
+      vpcbr:
+  web:
+    build: ./flask
+    container_name: flask_exam
+    restart: always
+    networks:
+      vpcbr:
+  gitlab-runner:
+    image: 'gitlab/gitlab-runner:v14.10.1'
+    container_name: gitlab-runner
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./gitlab-runner:/etc/gitlab-runner
+    restart: unless-stopped
+    networks:
+      vpcbr:
+  mysql:
+    image: mysql:8.0
+    ports:
+      - 3306:3306
+    container_name: mysql
+    volumes:
+      - ./db:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=hemmelig
+      - MYSQL_PASSWORD=hemmelig
+      - MYSQL_USER=root
+      - MYSQL_DATABASE=db
+    restart: always
+    networks:
+      vpcbr:
+
+networks:
+  vpcbr:

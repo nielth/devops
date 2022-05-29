@@ -1,0 +1,6 @@
+*.pyc
+updated.txt
+.pytest_cache
+.idea
+screenshots/
+.env
