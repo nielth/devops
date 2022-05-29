@@ -3,14 +3,14 @@ services:
   nginx:
     build: ./nginx
     container_name: nginx
-    volumes:
-      - ./cert/:/etc/nginx/ssl/:ro
     ports:
       - 443:443
       - 80:80
     depends_on:
-      - web
+      - flask_exam
     restart: unless-stopped
+    networks:
+      vpcbr:
   gitlab:
     image: 'gitlab/gitlab-ee:14.10.0-ee.0'
     restart: always
@@ -22,9 +22,6 @@ services:
         nginx['listen_port'] = 80
         nginx['listen_https'] = false
         gitlab_rails['gitlab_shell_ssh_port'] = 2224
-    ports:
-      - '81:80'
-      - '2224:22'
     volumes:
       - './gitlab/config:/etc/gitlab'
       - './gitlab/logs:/var/log/gitlab'
@@ -65,4 +62,3 @@ services:
 
 networks:
   vpcbr:
-  
